@@ -14,11 +14,11 @@ router.post("/", async (req, res) => {
     const { teacher_name, phone, email, password } = req.body;
     const teacherModel = await initTeacherModel();
     if (!teacher_name || teacher_name == "") {
-      const updated_response = setErrorResponseMsg(
-        RESPONSE.PARAMETER_IS_MANDATORY,
-        "teacher_name "
-      );
-      return send(res, updated_response);
+      const response = RESPONSE.PARAMETER_IS_MANDATORY;
+      return res.json({
+        code: response.code,
+        message: "teacher_name " + response.message,
+      });
     }
 
     if (!phone || phone == "") {
@@ -80,16 +80,36 @@ router.post("/", async (req, res) => {
       }
     }
 
-    const encryptedPassword = await bcrypt.hash(password, process.env.TOKENKEY);
 
-    await teacherModel.create({
+
+    
+
+    const encryptedPassword = await bcrypt.hash(
+      password,
+      constants.HASH_PASSWORD
+    );
+
+    const data = await teacherModel.create({
       teacher_name: teacher_name,
       phone: phone,
       email: email,
       password: encryptedPassword,
     });
 
-    return send(res, RESPONSE.SUCCESS);
+    // return send(res, RESPONSE.SUCCESS);
+    // return res.json({
+    //   code: 200,
+    //   message: "everything worked as expected",
+    //   data,
+    // });
+
+
+    const response = RESPONSE.SUCCESS;
+    return res.json({
+      code: response.code,
+      message:  response.message,
+      data
+    });
   } catch (err) {
     console.log(err.stack);
     return send(res, RESPONSE.UNKNOWN_ERROR);

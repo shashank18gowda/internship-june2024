@@ -11,9 +11,7 @@ const storage = multer.diskStorage({
     cb(null, uniqueSuffix + ext);
   },
 });
-
 const maxSize = 1024 * 1024 * 2; // 2MB
-
 const fileFilter = (req, file, cb) => {
   if (
     !file.mimetype.includes("jpeg") &&
